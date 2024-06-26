@@ -6,12 +6,12 @@ terraform {
   backend "azurerm" {
     storage_account_name = "tspontes7xg2dfzesta001"
     container_name       = "terraform"
-    key                  = "terraform.tfstate"
+    key                  = "lw.tfstate"
   }
 }
 
 resource "azurerm_resource_group" "rsg" {
-  name     = "tpontes-lacework"
+  name     = "tpontes-lacework-scan"
   location = "East US"
 
   tags = {
@@ -22,7 +22,7 @@ resource "azurerm_resource_group" "rsg" {
 }
 
 resource "azurerm_service_plan" "app_plan" {
-  name                = "tsp_lw_app_plan-001"
+  name                = "tsp_lw_app_plan-002"
   resource_group_name = azurerm_resource_group.rsg.name
   location            = azurerm_resource_group.rsg.location
   sku_name            = "B1"
@@ -35,7 +35,7 @@ resource "azurerm_service_plan" "app_plan" {
 }
 
 resource "azurerm_windows_web_app" "web_app" {
-  name                = "tsp-lw-web-app-0001"
+  name                = "tsp-lw-web-app-0002"
   resource_group_name = azurerm_resource_group.rsg.name
   location            = azurerm_service_plan.app_plan.location
   service_plan_id     = azurerm_service_plan.app_plan.id
