@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "storage_account" {
-  name                     = "tsp-lw-storage"
+  name                     = "tsplwstorage001"
   resource_group_name      = azurerm_resource_group.rsg.name
   location                 = azurerm_resource_group.rsg.location
   account_tier             = "Standard"
