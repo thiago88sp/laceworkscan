@@ -17,6 +17,6 @@ resource "azurerm_resource_group" "rsg" {
   tags = {
     Username = "tpontes"
     Source   = "Terraform"
-    Purpose = "Lacework Test"
+    Purpose  = "Lacework Test"
   }
 }
