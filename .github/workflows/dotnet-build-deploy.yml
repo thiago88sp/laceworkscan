@@ -61,6 +61,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set SCAN_COMMAND
+        run: echo "SCAN_COMMAND=tf-scan" >> $GITHUB_ENV
+
       - name: Scan the repo for vulnerabilities in IaC
         run: |
           # Saving SCAN Results
@@ -72,6 +75,7 @@ jobs:
             -e LW_API_SECRET=${{ secrets.LW_API_SECRET }} \
             -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
             -e LW_SCANNER_SAVE_RESULTS=true \
+            -e SCAN_COMMAND=tf-scan \
             -v "$(pwd):/app/src" \
             lacework/codesec-iac:latest
         env:
@@ -126,48 +130,4 @@ jobs:
           terraform plan
 
       - name: Terraform Apply
-        run: |
-          cd terraform
-          terraform apply -auto-approve
-
-      - name: Debug Terraform Outputs
-        run: |
-          cd terraform
-          terraform output -json
-
-      - name: Output Azure App Service Name
-        id: output
-        working-directory: terraform
-        run: |
-          app_service_name=$(terraform output -raw app_service_name)
-          resource_group_name=$(terraform output -raw resource_group_name)
-          echo "App Service Name: $app_service_name"
-          echo "Resource Group Name: $resource_group_name"
-          echo "app_service_name=$app_service_name" >> $GITHUB_ENV
-          echo "resource_group_name=$resource_group_name" >> $GITHUB_ENV
-
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: .net-app
-
-      - name: Retrieve Azure App Service Publish Profile
-        id: retrieve-profile
-        run: |
-          az webapp deployment list-publishing-profiles --resource-group ${{ env.resource_group_name }} --name ${{ env.app_service_name }} --output json > publishProfile.json
-          cat publishProfile.json
-  
-      - name: Set Publish Profile as Secret
-        id: set-profile
-        run: |
-          echo "AZUREAPPSERVICE_PUBLISHPROFILE=$(cat publishProfile.json | jq -c .)" >> $GITHUB_ENV
-        
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.app_service_name }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          slot-name: 'Production'
-          package: .
-        env:
-          AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        run:
