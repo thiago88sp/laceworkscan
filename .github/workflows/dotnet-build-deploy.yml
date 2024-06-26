@@ -64,7 +64,7 @@ jobs:
       - name: Scan the repo for vulnerabilities in IaC
         run: |
              # Saving SCAN Results
-             echo "LW_SCANNER_SAVE_RESULTS=true" > env.list
+             echo "LW_SCANNER_SAVE_RESULTS=true" >> env.list
              # Required to pass the GITHUB and Lacework (LW) environment variables to use
              env | grep "GITHUB_\|LW_\|CI_" > env.list
              # Required command based on what you want to scan in the repository
